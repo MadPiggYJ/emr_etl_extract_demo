@@ -1,0 +1,8 @@
+#!/bin/bash
+set -euo pipefail
+
+sudo mkdir -p /usr/lib/spark/jars
+sudo aws s3 cp s3://${etl_bucket}/bootstrap/postgresql-42.7.3.jar \
+  /usr/lib/spark/jars/postgresql-42.7.3.jar
+
+echo "Bootstrap complete"

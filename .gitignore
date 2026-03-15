@@ -1,0 +1,40 @@
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+tfplan
+*.tfplan
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform lock file — 可以提交，也可以 ignore（视团队习惯）
+# .terraform.lock.hcl
+
+# Sensitive outputs — 含真实资源 ID、endpoint、bucket 名
+outputs.txt
+terraform.tfvars
+*.auto.tfvars
+
+# JDBC jar（二进制，体积大，从官方下载）
+bootstrap/*.jar
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
