@@ -30,9 +30,10 @@ resource "aws_security_group" "endpoints" {
 # 跨 SG 的 ingress 规则拆到下方 aws_security_group_rule，避免循环依赖
 # 被访问对象需要ingress rule, 访问对象需要egress rule
 resource "aws_security_group" "rds" {
-  name        = "${local.project_name}-rds-sg"
-  description = "RDS PostgreSQL - ingress from EMR nodes only"
-  vpc_id      = module.vpc.vpc_id
+  name                   = "${local.project_name}-rds-sg"
+  description            = "RDS PostgreSQL - ingress from EMR nodes only"
+  vpc_id                 = module.vpc.vpc_id
+  revoke_rules_on_delete = true
 }
 
 # EMR Master SG
@@ -40,27 +41,30 @@ resource "aws_security_group" "rds" {
 # 入站：不开 22（用 SSM 登录，无需 SSH）
 # 注意：跨 SG 的 egress 规则拆到下方 aws_security_group_rule，避免循环依赖
 resource "aws_security_group" "emr_master" {
-  name        = "${local.project_name}-emr-master-sg"
-  description = "EMR master - outbound to RDS and SSM, no inbound SSH"
-  vpc_id      = module.vpc.vpc_id
+  name                   = "${local.project_name}-emr-master-sg"
+  description            = "EMR master - outbound to RDS and SSM, no inbound SSH"
+  vpc_id                 = module.vpc.vpc_id
+  revoke_rules_on_delete = true
 }
 
 # EMR Slave (core) SG
 # 出站：443 → SSM，5432 → RDS，全部 → master
 # 注意：跨 SG 的 egress 规则拆到下方 aws_security_group_rule，避免循环依赖
 resource "aws_security_group" "emr_slave" {
-  name        = "${local.project_name}-emr-slave-sg"
-  description = "EMR core nodes - outbound to RDS, master, SSM"
-  vpc_id      = module.vpc.vpc_id
+  name                   = "${local.project_name}-emr-slave-sg"
+  description            = "EMR core nodes - outbound to RDS, master, SSM"
+  vpc_id                 = module.vpc.vpc_id
+  revoke_rules_on_delete = true
 }
 
 # EMR Service Access SG — 私有子网必须有，EMR 控制平面用这个管理集群
 # 不加这个，EMR 在私有子网里会启动失败
 # 注意：跨 SG 的 egress 规则拆到下方 aws_security_group_rule，避免循环依赖
 resource "aws_security_group" "emr_service_access" {
-  name        = "${local.project_name}-emr-service-access-sg"
-  description = "EMR service access - required for private subnet clusters"
-  vpc_id      = module.vpc.vpc_id
+  name                   = "${local.project_name}-emr-service-access-sg"
+  description            = "EMR service access - required for private subnet clusters"
+  vpc_id                 = module.vpc.vpc_id
+  revoke_rules_on_delete = true
 }
 
 # ══════════════════════════════════════════════════════════════════════════════
